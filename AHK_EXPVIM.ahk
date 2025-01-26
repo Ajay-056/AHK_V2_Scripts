@@ -4,7 +4,7 @@ Persistent
 
 global vimMode := "insert" ; Default mode is Insert
 
-
+; Auto launch required folders during logon
 Sleep 5600
 Run '"explorer.exe" "C:\Users\rajay\Downloads\"'
 Sleep 1600
@@ -18,6 +18,7 @@ Sleep 1600
 ; Monitor if Notepad is active
 #HotIf WinActive("ahk_exe explorer.exe")
 
+; Reload the script with a binding
 ~!r::Reload
 
 ; Switch to Normal mode with Esc
@@ -41,7 +42,8 @@ i::
 }   
 
 ; Implement Vim keybindings in Normal mode
-j:: ; Move cursor down
+; Move cursor down
+j::
 {    
     global vimMode
         if (vimMode == "normal") {
@@ -51,7 +53,8 @@ j:: ; Move cursor down
         }
 }
 
-k:: ; Move cursor up
+; Move cursor up
+k:: 
 {    
     global vimMode
         if (vimMode = "normal") {
@@ -61,6 +64,7 @@ k:: ; Move cursor up
         }
 }
 
+; focus the file search
 f::
 {
     global vimMode
@@ -71,7 +75,7 @@ f::
         }
 }
 
-; Delete character with 'x' in Normal mode
+; Cut files
 x::
 {
     global vimMode
@@ -82,7 +86,7 @@ x::
         }
 }
 
-; Yank current line with 'yy'
+; Copy files
 c::
 {
     global vimMode
@@ -93,6 +97,7 @@ c::
         }
 }
 
+; Paste files
 v::
 {
     global vimMode
@@ -104,7 +109,7 @@ v::
         }
 }
 
-
+; select all files in a folder
 a::
 {
     global vimMode
@@ -115,6 +120,7 @@ a::
         }
 }
 
+; Permanently delete selected files
 d::
 {
     global vimMode
@@ -125,7 +131,7 @@ d::
         }
 }
 
-
+; Create new folder
 n::
 {
     global vimMode
