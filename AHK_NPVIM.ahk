@@ -4,11 +4,12 @@ Persistent
 
 global vimMode := "insert" ; Default mode is Insert
 
-
 ; Monitor if Notepad is active
 #HotIf WinActive("ahk_class Notepad")
 
+; Reload the script with a binding
 ~!r::Reload
+
 ; Switch to Normal mode with Esc
 Esc::
 {    
@@ -32,7 +33,8 @@ i::
 }   
 
 ; Implement Vim keybindings in Normal mode
-j:: ; Move cursor down
+; Move cursor down
+j:: 
 {    
     global vimMode
         if (vimMode == "normal") {
@@ -42,7 +44,8 @@ j:: ; Move cursor down
         }
 }
 
-k:: ; Move cursor up
+; Move cursor up
+k:: 
 {    
     global vimMode
         if (vimMode = "normal") {
@@ -52,7 +55,8 @@ k:: ; Move cursor up
         }
 }
 
-h:: ; Move cursor left
+; Move cursor left
+h:: 
 {
     global vimMode
         if (vimMode = "normal") {
@@ -62,7 +66,8 @@ h:: ; Move cursor left
         }
 }
 
-l:: ; Move cursor right
+; Move cursor right
+l:: 
 {
     if (vimMode = "normal") {
         Send "{Right}"
@@ -82,7 +87,7 @@ x::
         }
 }
 
-; Yank current line with 'yy'
+; Yank current line with 'Y'
 +y::
 {
     global vimMode
@@ -96,7 +101,7 @@ x::
         }
 }
 
-; Paste yanked text with 'p'
+; Paste yanked text above current line with 'p'
 p::
 {
     global vimMode
@@ -109,6 +114,7 @@ p::
         }
 }
 
+; go to top of the file (gg)
 g::
 {
     global vimMode
@@ -119,7 +125,7 @@ g::
         }
 }
 
-
+; go to end of the file (G)
 +g::
 {
     global vimMode
@@ -130,6 +136,7 @@ g::
         }
 }
 
+; select all content
 a::
 {
     global vimMode
@@ -140,8 +147,7 @@ a::
         }
 }
 
-
-; Paste yanked text with 'p'
+; Paste yanked text below current line with 'P'
 ^p::
 {
     global vimMode
@@ -149,11 +155,11 @@ a::
             Send "{Shift}{End}{Up}{Enter}"
                 Send "^v" ; Paste clipboard content
         } else {
-            Send "p"
+            Send "+p"
         }
 }
 
-; Delete current line with 'dd'
+; Delete current line with 'd'
 d::
 {
     global vimMode
@@ -163,6 +169,5 @@ d::
             send "d"
         }
 }
-
 
 #HotIf ; End of context-sensitive hotkeys
