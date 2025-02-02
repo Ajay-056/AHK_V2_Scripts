@@ -4,12 +4,21 @@ Persistent
 
 global vimMode := "insert" ; Default mode is Insert
 
+; Global variable to track key sequence
+global KeySequence := ""
+
+; Time limit for second key press (in milliseconds)
+global Timeout := 400
+
+; Function to reset the key sequence
+ResetKeySequence(*) {
+    KeySequence := ""
+}
+
 ; Monitor if Notepad is active
 #HotIf WinActive("ahk_class Notepad")
 
-; Reload the script with a binding
 ~!r::Reload
-
 ; Switch to Normal mode with Esc
 Esc::
 {    
@@ -33,30 +42,27 @@ i::
 }   
 
 ; Implement Vim keybindings in Normal mode
-; Move cursor down
-j:: 
-{    
-    global vimMode
-        if (vimMode == "normal") {
-            Send "{Enter}"
-        } else {
-            SendText "j"
-        }
-}
+; j:: ; Move cursor down
+; {    
+;     global vimMode
+;         if (vimMode == "normal") {
+;             Send "{Enter}"
+;         } else {
+;             SendText "j"
+;         }
+; }
+;
+; k:: ; Move cursor up
+; {    
+;     global vimMode
+;         if (vimMode = "normal") {
+;             Send "{Up}"
+;         } else {
+;             SendText "k"
+;         }
+; }
 
-; Move cursor up
-k:: 
-{    
-    global vimMode
-        if (vimMode = "normal") {
-            Send "{Up}"
-        } else {
-            SendText "k"
-        }
-}
-
-; Move cursor left
-h:: 
+h:: ; Move cursor left
 {
     global vimMode
         if (vimMode = "normal") {
@@ -66,8 +72,7 @@ h::
         }
 }
 
-; Move cursor right
-l:: 
+l:: ; Move cursor right
 {
     if (vimMode = "normal") {
         Send "{Right}"
@@ -87,7 +92,7 @@ x::
         }
 }
 
-; Yank current line with 'Y'
+; Yank current line with 'yy'
 +y::
 {
     global vimMode
@@ -101,7 +106,7 @@ x::
         }
 }
 
-; Paste yanked text above current line with 'p'
+; Paste yanked text with 'p'
 p::
 {
     global vimMode
@@ -114,7 +119,6 @@ p::
         }
 }
 
-; go to top of the file (gg)
 g::
 {
     global vimMode
@@ -125,7 +129,7 @@ g::
         }
 }
 
-; go to end of the file (G)
+
 +g::
 {
     global vimMode
@@ -136,7 +140,6 @@ g::
         }
 }
 
-; select all content
 a::
 {
     global vimMode
@@ -147,7 +150,8 @@ a::
         }
 }
 
-; Paste yanked text below current line with 'P'
+
+; Paste yanked text with 'p'
 ^p::
 {
     global vimMode
@@ -155,11 +159,11 @@ a::
             Send "{Shift}{End}{Up}{Enter}"
                 Send "^v" ; Paste clipboard content
         } else {
-            Send "+p"
+            Send "p"
         }
 }
 
-; Delete current line with 'd'
+; Delete current line with 'dd'
 d::
 {
     global vimMode
@@ -168,6 +172,84 @@ d::
         } else {
             send "d"
         }
+}
+
+
+u::
+{
+    global vimMode
+        if (vimMode = "normal") {
+            Send "^z"
+        } else {
+            send "u"
+        }
+}
+
+o::
+{
+    global vimMode
+        if (vimMode = "normal") {
+            vimMode := "Insert"
+            Send "{End}{Enter}"
+        } else {
+            send "o"
+        }
+}
+
++o::
+{
+    global vimMode
+        if (vimMode = "normal") {
+            vimMode := "Insert"
+            Send "{Home}{Enter}{Up}"
+        } else {
+            send "+o"
+        }
+}
+
+; r::
+; {
+;     global vimMode
+;         if (vimMode = "normal") {
+;             vimMode := "Insert"
+;             Send "{Ins Down}{* Up}{Ins Up}"
+;             vimMode := "normal"
+;         } else {
+;             send "+o"
+;         }
+; }
+
+; First key: "x"
+1:: {
+    global KeySequence
+    if (KeySequence = "" && vimMode = "normal") {
+        KeySequence := "1"
+        SetTimer(ResetKeySequence, -Timeout) ; Start the timer
+    } else {
+        send "x"
+    }
+}
+
+; Second key: "j"
+j:: {
+    global KeySequence
+    if (KeySequence = "1" && vimMode = "normal") {
+        Send "{Home}{Shift Down}{End}{Down}{End}{Shift Up}{Del}"
+        KeySequence := "" ; Reset sequence
+    } else {
+        Send("j") ; Normal key behavior
+    }
+}
+
+; Second key: "k"
+k:: {
+    global KeySequence
+    if (KeySequence = "1" and vimMode = "normal") {
+        Send "{End}{Shift down}{Up}{Home}{Shift Up}{Del}{Backspace}"
+        KeySequence := "" ; Reset sequence
+    } else {
+        Send("k") ; Normal key behavior
+    }
 }
 
 #HotIf ; End of context-sensitive hotkeys
